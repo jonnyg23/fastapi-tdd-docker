@@ -4,10 +4,19 @@ import json
 
 import pytest
 
+from app.api import summaries
+
+# TODO Fix the other failing tests. Test with `docker-compose exec web python -m
+# pytest`
+
 # -------------- POST Tests --------------
 
 
-def test_create_summary(test_app_with_db):
+def test_create_summary(test_app_with_db, monkeypatch):
+    def mock_generate_summary(summary_id, url):
+        return None
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
+
     response = test_app_with_db.post(
         "/summaries/", data=json.dumps({"url": "https://foo.bar"})
     )
